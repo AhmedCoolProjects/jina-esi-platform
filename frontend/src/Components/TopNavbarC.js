@@ -20,6 +20,7 @@ import {
   ExitToAppOutlined,
 } from "@material-ui/icons";
 import "../styles/topnavbarc.css";
+import firebaseAuth from "../firebase/firebase";
 
 const menuContents = [
   {
@@ -41,11 +42,6 @@ const menuContents = [
     title: "Personal Chat",
     link: "/pchat",
     icon: <ChatBubbleOutlineOutlined fontSize="small" />,
-  },
-  {
-    title: "Log Out",
-    link: "/",
-    icon: <ExitToAppOutlined fontSize="small" />,
   },
 ];
 const sections = [
@@ -69,6 +65,10 @@ const sections = [
 export default function TopNavbarC() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const handleLogoutFct = () => {
+    handleMobileMenuClose();
+    firebaseAuth.signOut();
+  };
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
@@ -94,6 +94,12 @@ export default function TopNavbarC() {
           </MenuItem>
         </Link>
       ))}
+      <MenuItem onClick={handleLogoutFct}>
+        <ListItemIcon>
+          <ExitToAppOutlined fontSize="small" />
+        </ListItemIcon>
+        Log Out
+      </MenuItem>
     </Menu>
   );
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -18,6 +18,8 @@ import MyPostsP from "./Pages/MyPostsP";
 import PostP from "./Pages/PostP";
 import FooterC from "./Components/FooterC";
 import "./base.css";
+import firebaseAuth from "./firebase/firebase";
+import { yellow } from "@material-ui/core/colors";
 
 function App() {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -26,6 +28,8 @@ function App() {
       createMuiTheme({
         palette: {
           type: prefersDarkMode ? "dark" : "dark",
+          secondary: yellow,
+          primary: yellow,
         },
       }),
     [prefersDarkMode]
@@ -38,33 +42,59 @@ function App() {
     return props.children;
   }
   const ScrollToTop = withRouter(_ScrollToTop);
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    const unsubscribe = firebaseAuth.onAuthStateChanged((userAuth) => {
+      const user = {
+        uid: userAuth?.uid,
+        email: userAuth?.email,
+      };
+      if (userAuth) {
+        console.log("userAuth", userAuth);
+        setUser(user);
+      } else {
+        setUser(null);
+        console.log("userAuth null");
+      }
+    });
+    return unsubscribe;
+  }, []);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div className="app">
         <Router>
           <ScrollToTop>
-            <Switch>
-              <Route path="/module" exact>
-                <ModuleP />
-              </Route>
-              <Route path="/pchat" exact>
-                <PersonalChatP />
-              </Route>
-              <Route path="/profile" exact>
-                <ProfileP />
-              </Route>
-              <Route path="/post" exact>
-                <PostP />
-              </Route>
-              <Route path="/my_posts" exact>
-                <MyPostsP />
-              </Route>
-              <Route path="/" exact>
-                {true ? <LoginP /> : <DashboardP />}
-              </Route>
-              <Redirect to="/" />
-            </Switch>
+            {user ? (
+              <Switch>
+                <Route path="/module" exact>
+                  <ModuleP />
+                </Route>
+                <Route path="/pchat" exact>
+                  <PersonalChatP />
+                </Route>
+                <Route path="/profile" exact>
+                  <ProfileP />
+                </Route>
+                <Route path="/post" exact>
+                  <PostP />
+                </Route>
+                <Route path="/my_posts" exact>
+                  <MyPostsP />
+                </Route>
+                <Route path="/" exact>
+                  <DashboardP />
+                </Route>
+                <Redirect to="/" />
+              </Switch>
+            ) : (
+              <Switch>
+                <Route path="/" exact>
+                  <LoginP />
+                </Route>
+                <Redirect to="/" />
+              </Switch>
+            )}
           </ScrollToTop>
           <FooterC />
         </Router>
