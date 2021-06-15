@@ -1,0 +1,31 @@
+.post_description {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.loginp_container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.loginp_header {
+  height: 180px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+.loginp_input {
+  flex: 1;
+  font-size: 1.3rem;
+  border: none;
+  color: #dfdbdbef;
+  padding: 16px;
+  outline: none;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+}

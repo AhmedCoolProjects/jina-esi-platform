@@ -1,0 +1,34 @@
+.first_toolbar_disktop {
+  border-bottom: 1px solid #ffffff1f;
+  display: flex !important;
+}
+.first_toolbar_mobile {
+  border-bottom: 1px solid #ffffff1f;
+  display: none !important;
+}
+.second_toolbar {
+  justify-content: space-between;
+  overflow-x: auto;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100;
+  background-color: #303030e8 !important;
+}
+.second_toolbar::-webkit-scrollbar {
+  display: none;
+}
+.toolbar_link {
+  flex-shrink: 0;
+  padding: 16px;
+}
+.toolbar_link:hover {
+  text-decoration: underline !important;
+}
+@media screen and (max-width: 800px) {
+  .first_toolbar_disktop {
+    display: none !important;
+  }
+  .first_toolbar_mobile {
+    display: flex !important;
+  }
+}

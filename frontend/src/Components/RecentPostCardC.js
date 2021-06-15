@@ -1,22 +1,26 @@
 import React from "react";
-import "../styles/postcardc.css";
-import { Link } from "react-router-dom";
+import "../styles/recentpostcardc.css";
 import { Divider, CardActionArea, Grid, Typography } from "@material-ui/core";
-function PostCardC({ post }) {
+import { Link } from "react-router-dom";
+
+export default function RecentPostCardC({ post }) {
   return (
-    <Grid xs={12} sm={6} md={4} item>
+    <Grid
+      style={{
+        marginTop: 32,
+        marginBottom: 32,
+      }}
+      item>
       <Link to="/post" style={{ color: "inherit", textDecoration: "none" }}>
-        <CardActionArea>
-          <div className="postcardc_container">
+        <CardActionArea className="recent_post_card_c_cardactionarea">
+          <div className="recent_post_card_c_container">
             <img
               src={post.image}
               alt={post.title}
-              className="postcardc_image"
+              className="recent_post_card_c_image"
             />
-            <div className="postcardc_infos">
-              <Typography noWrap variant="h5">
-                {post.title}
-              </Typography>
+            <div className="recent_post_card_c_infos">
+              <Typography variant="h5">{post.title}</Typography>
               <Divider />
               <Typography
                 style={{ textAlign: "right" }}
@@ -45,5 +49,3 @@ function PostCardC({ post }) {
     </Grid>
   );
 }
-
-export default PostCardC;
