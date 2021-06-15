@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import firebaseAuth from "../firebase/firebase";
 import {
   Container,
   Grid,
@@ -7,9 +8,43 @@ import {
   Typography,
 } from "@material-ui/core";
 import { ExitToAppOutlined } from "@material-ui/icons";
+import {
+  ErrorPasswordDialog,
+  UNFDialog,
+  ToManyRequestsDialog,
+  ResetPasswordDialog,
+} from "../Components/LoginDialogsC";
 import team_solid from "../assets/team_solid.svg";
 
 function LoginP() {
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [openResetDialog, setOpenResetDialog] = useState(false);
+  const [openTooManyRequests, setOpenTooManyRequests] = useState(false);
+  const [openUNFDialog, setOpenUNFDialog] = useState(false);
+  const handleLoginFct = (e) => {
+    e.preventDefault();
+    firebaseAuth
+      .signInWithEmailAndPassword(userEmail, userPassword)
+      .then((user) => {
+        console.log("user", user);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.code === "auth/user-not-found") {
+          console.log(err.message);
+          setOpenUNFDialog(true);
+        } else if (err.code === "auth/wrong-password") {
+          console.log(err.message);
+          setOpenErrorDialog(true);
+        } else if (err.code === "auth/too-many-requests") {
+          console.log(err.message);
+          setOpenTooManyRequests(true);
+        }
+      });
+  };
+
   return (
     <Container className="loginp_container" maxWidth="lg">
       <div className="loginp_header">
@@ -39,10 +74,13 @@ function LoginP() {
             }}
             elevation={4}>
             <input
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
               type="email"
               id="user_email_id"
               placeholder="name..@esi.ac.ma"
               className="loginp_input"
+              required
             />
           </Paper>
           <Paper
@@ -56,10 +94,13 @@ function LoginP() {
             }}
             elevation={4}>
             <input
+              value={userPassword}
+              onChange={(e) => setUserPassword(e.target.value)}
               type="password"
               id="user_password_id"
               placeholder="password"
               className="loginp_input"
+              required
             />
           </Paper>
           <Paper
@@ -73,6 +114,7 @@ function LoginP() {
             }}
             elevation={4}>
             <CardActionArea
+              onClick={handleLoginFct}
               style={{
                 padding: 12,
                 display: "flex",
@@ -86,6 +128,29 @@ function LoginP() {
           </Paper>
         </Grid>
       </Grid>
+      {/* dialog for password error */}
+      <ErrorPasswordDialog
+        handleCloseDialog={() => setOpenErrorDialog(false)}
+        openDialog={openErrorDialog}
+        openTheResetPasswordDialog={() => setOpenResetDialog(true)}
+      />
+      {/* dialog for user not found */}
+      <UNFDialog
+        handleCloseDialog={() => setOpenUNFDialog(false)}
+        openDialog={openUNFDialog}
+        openContactUs={() => setOpenUNFDialog(false)}
+      />
+      {/* dialog for reset password */}
+      <ResetPasswordDialog
+        openDialog={openResetDialog}
+        handleCloseDialog={() => setOpenResetDialog(false)}
+      />
+      {/* dialog for many requests */}
+      <ToManyRequestsDialog
+        handleCloseDialog={() => setOpenTooManyRequests(false)}
+        openDialog={openTooManyRequests}
+        openContactUs={() => setOpenTooManyRequests(false)}
+      />
     </Container>
   );
 }

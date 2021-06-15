@@ -31,7 +31,11 @@ function FooterC() {
   const classes = useStyles();
   return (
     <footer className={classes.footer}>
-      <Typography color="#1a1a1a" variant="h6" align="center" gutterBottom>
+      <Typography
+        color="textSecondary"
+        variant="h6"
+        align="center"
+        gutterBottom>
         Created By:
       </Typography>
       <Typography
