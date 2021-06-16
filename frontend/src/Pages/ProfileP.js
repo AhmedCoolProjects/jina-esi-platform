@@ -10,8 +10,15 @@ import {
 import { ExitToAppOutlined } from "@material-ui/icons";
 import TopNavbarC from "../Components/TopNavbarC";
 import ProfileAvatarC from "../Components/ProfileAvatarC";
+import { useSelector } from "react-redux";
+import { selectUser } from "../Redux/User";
+import firebaseAuth from "../firebase/firebase";
 
 function ProfileP() {
+  const user = useSelector(selectUser);
+  const handleLogoutFct = () => {
+    firebaseAuth.signOut();
+  };
   return (
     <div>
       <Container maxWidth="lg">
@@ -70,7 +77,7 @@ function ProfileP() {
                     </td>
                     <td>
                       <Typography variant="h5" color="textSecondary">
-                        ahmed.bargady@esi.ac.ma
+                        {user.email}
                       </Typography>
                     </td>
                   </tr>
@@ -116,6 +123,7 @@ function ProfileP() {
                 }}
                 elevation={4}>
                 <CardActionArea
+                  onClick={handleLogoutFct}
                   style={{
                     padding: 12,
                     display: "flex",

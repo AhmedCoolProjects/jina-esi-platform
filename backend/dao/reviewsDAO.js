@@ -14,7 +14,6 @@ export default class ReviewsDAO {
       console.error(`Unable to establish collection handles in userDAO: ${e}`);
     }
   }
-
   static async addReview(restaurantId, user, review, date) {
     try {
       const reviewDoc = {

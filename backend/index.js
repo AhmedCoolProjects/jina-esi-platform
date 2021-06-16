@@ -1,16 +1,17 @@
 import app from "./server.js";
 import mongodb from "mongodb";
 import dotenv from "dotenv";
-import ReviewsDAO from "./dao/reviewsDAO.js";
-import RestaurantsDao from "./dao/restaurantsDao.js";
+import UsersDAO from "./dao/usersDAO.js";
+import ProfsDAO from "./dao/usersDAO.js";
+import PostsDAO from "./dao/postsDAO.js";
+import ModulesDAO from "./dao/modulesDAO.js";
 
 dotenv.config();
 const MongoClient = mongodb.MongoClient;
 const port = process.env.PORT || 8000;
 // connecting to the db
-MongoClient.connect(process.env.RESTREVIEWS_DB_URI, {
-  poolSize: 50,
-  wtimeout: 2500,
+MongoClient.connect(process.env.JINAESIPLATFORM_DB_URI, {
+  useUnifiedTopology: true,
   useNewUrlParser: true,
 })
   .catch((err) => {
@@ -20,8 +21,10 @@ MongoClient.connect(process.env.RESTREVIEWS_DB_URI, {
   })
   .then(async (client) => {
     // get first reference to the collection in the db
-    await RestaurantsDao.injectDB(client);
-    await ReviewsDAO.injectDB(client);
+    await UsersDAO.injectDB(client);
+    await ProfsDAO.injectDB(client);
+    await PostsDAO.injectDB(client);
+    await ModulesDAO.injectDB(client);
     //   start the server
     app.listen(port, () => {
       console.log("listening on the port ");

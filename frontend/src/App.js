@@ -20,8 +20,12 @@ import FooterC from "./Components/FooterC";
 import "./base.css";
 import firebaseAuth from "./firebase/firebase";
 import { yellow } from "@material-ui/core/colors";
+import { useDispatch, useSelector } from "react-redux";
+import { login, logout, selectUser } from "./Redux/User";
 
 function App() {
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = React.useMemo(
     () =>
@@ -42,18 +46,18 @@ function App() {
     return props.children;
   }
   const ScrollToTop = withRouter(_ScrollToTop);
-  const [user, setUser] = useState(null);
   useEffect(() => {
     const unsubscribe = firebaseAuth.onAuthStateChanged((userAuth) => {
       const user = {
-        uid: userAuth?.uid,
         email: userAuth?.email,
+        firsName: userAuth?.displayName,
+        lastName: userAuth?.displayName,
       };
       if (userAuth) {
         console.log("userAuth", userAuth);
-        setUser(user);
+        dispatch(login(user));
       } else {
-        setUser(null);
+        dispatch(logout());
         console.log("userAuth null");
       }
     });
