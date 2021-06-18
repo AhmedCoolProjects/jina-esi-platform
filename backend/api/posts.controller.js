@@ -3,11 +3,18 @@ import PostsDAO from "../dao/postsDAO.js";
 export default class PostsCtrl {
   static async apiGetAllPosts(req, res, next) {
     let filters = {};
-    if (req.query.title) {
+    if (req.query.writer_email) {
+      filters.writer_email = req.query.writer_email;
+    } else if (req.query.title) {
       filters.title = req.query.title;
+    } else if (req.query.module_name) {
+      filters.module_name = req.query.module_name;
     } else if (req.query.content) {
       filters.content = req.query.content;
+    } else if (req.query._id) {
+      filters._id = req.query._id;
     }
+
     const { postsList, totalNbrPosts } = await PostsDAO.getAllPosts({
       filters,
     });
@@ -26,6 +33,7 @@ export default class PostsCtrl {
       const date = req.body.date;
       const module_name = req.body.module_name;
       const image = req.body.image;
+      // uploadImagePost.single();
       const OperationResponse = await PostsDAO.addPost(
         writer_email,
         title,

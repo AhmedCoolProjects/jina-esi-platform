@@ -20,3 +20,9 @@
   padding: 12px;
   justify-content: space-between;
 }
+.postcardc_content {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

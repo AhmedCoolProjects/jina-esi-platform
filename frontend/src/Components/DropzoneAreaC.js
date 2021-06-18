@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { DropzoneArea } from "material-ui-dropzone";
 
-function DropzoneAreaC() {
-  const [files, setFiles] = useState(null);
-  const handleChange = (files) => {
-    setFiles(files);
-  };
-  return <DropzoneArea onChange={() => handleChange.bind(this)} />;
+function DropzoneAreaC({ setFilesFct }) {
+  return (
+    <DropzoneArea
+      acceptedFiles={["image/*"]}
+      dropzoneText="Drag or drop your post image her or click"
+      onChange={setFilesFct.bind(this)}
+    />
+  );
 }
 
 export default DropzoneAreaC;

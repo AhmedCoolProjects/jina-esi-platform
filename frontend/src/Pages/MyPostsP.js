@@ -1,4 +1,6 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { selectUser } from "../Redux/User";
 import {
   Container,
   Grid,
@@ -12,59 +14,12 @@ import {
 } from "@material-ui/core";
 import { CloudUpload } from "@material-ui/icons";
 import PostCardC from "../Components/PostCardC";
+import JinaEPDataService from "../Axios/jinaesiplatform";
 import DropzoneAreaC from "../Components/DropzoneAreaC";
 import TopNavbarC from "../Components/TopNavbarC";
 import "../styles/mypostsp.css";
+import { storage } from "../firebase/firebase";
 
-const post1 = {
-  title: "Le Management",
-  image:
-    "https://img.daf-mag.fr/Img/BREVE/2020/6/350655/Asset-Management-Comment-adapter-new-normal--T.jpg",
-  owner: "Ahmed Bargady",
-  date: "26/03/2021 3:08 am",
-  description: (
-    <p className="post_description">
-      Le management est la mise en œuvre des moyens humains et matériels d'une
-      entreprise pour atteindre ses objectifs. Il correspond à l'idée de gestion
-      et de pilotage1 appliquée à une entreprise ou une unité de celle-ci.
-      Lorsqu'il concerne l'entreprise tout entière on peut généralement
-      l'assimiler à la fonction de direction (la « fonction administrative » de
-      H. Fayol). Le management est présenté ici dans sa version prédominante,
-      d'autres formes existent en particulier dans les approches en gouvernance
-      partagée. Le management consiste à2 : fixer des objectifs (stratégiques et
-      opérationnels), choisir les moyens de les atteindre, mettre en œuvre ces
-      moyens (recherche d'efficience), contrôler la mise en œuvre et les
-      résultats obtenus, assurer une régulation à partir de ce contrôle
-      (Gouvernance). Il comprend une dimension technique (principalement liée à
-      la comptabilité analytique et aux méthodes de contrôle de gestion visant à
-      optimiser les ressources) et une dimension humaine (liée à la nécessité
-      d'obtenir la motivation et la coopération des membres composant
-      l'organisation). Le management désigne aussi les responsables de la
-      fonction managériale (à ses différents niveaux dans l'entreprise). Les
-      différentes dimensions du management ont été théorisées à travers les
-      théories des organisations.
-    </p>
-  ),
-};
-const post2 = {
-  title: "La Métadonnée",
-  image: "https://i.ytimg.com/vi/jyva44uHoR4/maxresdefault.jpg",
-  owner: "Ahmed Bargady",
-  date: "26/03/2021 3:15 am",
-  description: (
-    <p className="post_description">
-      Une métadonnée (mot composé du préfixe grec meta, indiquant
-      l'auto-référence ; le mot signifie donc proprement « donnée de/à propos de
-      donnée ») est une donnée servant à définir ou décrire une autre donnée
-      quel que soit son support (papier ou électronique). Un exemple type est
-      d'associer à une donnée la date à laquelle elle a été produite ou
-      enregistrée, ou à une photo les coordonnées GPS du lieu où elle a été
-      prise. Les métadonnées sont à la base des techniques du Web sémantique.
-      Elles sont définies dans le cadre du modèle Resource Description Framework
-      (RDF).
-    </p>
-  ),
-};
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -75,21 +30,84 @@ const MenuProps = {
     },
   },
 };
-const ModuleTitles = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
+const modules_names = [
+  { title: "UNIMARC" },
+  { title: "SGBD: SQL" },
+  { title: "Micro-économie" },
+  { title: "Comptabilité générale" },
+  { title: "TEC 2" },
+  { title: "Réseaux informatiques" },
+  { title: "Analyse documentaire" },
+  { title: "Management" },
 ];
-const posts = [post1, post2, post1, post1, post2, post1, post2];
 function MyPostsP() {
-  const [moduleSelect, setModuleSelect] = useState("");
+  const user = useSelector(selectUser);
+  const [postModule, setPostModule] = useState("");
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
+  const [myPostsList, setMyPostsList] = useState([]);
+  const [progress, setProgress] = useState("");
+  const [postImage, setPostImage] = useState(null);
+  const handlePublishPost = () => {
+    const postImageName = `${Date.now()}-${postImage.name}`;
+    const uploadTask = storage
+      .ref(`posts-images/${postImageName}`)
+      .put(postImage);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // progress logic
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgress(progress);
+      },
+      (err) => {
+        console.log(err);
+      },
+      () => {
+        storage
+          .ref("posts-images")
+          .child(`${postImageName}`)
+          .getDownloadURL()
+          .then((url) => {
+            var data = {
+              writer_email: user.email,
+              title: postTitle,
+              content: postContent,
+              date: Date.now(),
+              module_name: postModule,
+              image: url,
+            };
+            JinaEPDataService.addPost(data)
+              .then((response) => {
+                setPostContent("");
+                setPostTitle("");
+                setPostImage(null);
+                setPostModule("");
+                retrieveMyPosts();
+              })
+              .catch((e) => console.log(e));
+          });
+      }
+    );
+  };
+  const setFilesFct = (files) => {
+    setPostImage(files[0]);
+  };
+
+  useEffect(() => {
+    retrieveMyPosts();
+  }, []);
+  const retrieveMyPosts = () => {
+    JinaEPDataService.getPostByEmail(user.email)
+      .then((response) => {
+        setMyPostsList(response.data.postsList);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   return (
     <Fragment>
@@ -106,7 +124,9 @@ function MyPostsP() {
           <div className="mypostsp_title_checkbox_container">
             <input
               type="text"
+              value={postTitle}
               id="post_title"
+              onChange={(e) => setPostTitle(e.target.value)}
               placeholder="Post Title"
               className="mypostsp_input_title"
             />
@@ -118,27 +138,31 @@ function MyPostsP() {
               <Select
                 labelId="select-module"
                 id="demo-mutiple-name"
-                value={moduleSelect}
-                onChange={(e) => setModuleSelect(e.target.value)}
+                value={postModule}
+                onChange={(e) => setPostModule(e.target.value)}
                 input={<Input />}
                 MenuProps={MenuProps}>
-                {ModuleTitles.map((title) => (
-                  <MenuItem key={title} value={title}>
-                    {title}
+                {modules_names.map((moduleName) => (
+                  <MenuItem key={moduleName.title} value={moduleName.title}>
+                    {moduleName.title}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </div>
-          <DropzoneAreaC />
+          <DropzoneAreaC setFilesFct={setFilesFct} />
+
           <textarea
             className="mypostsp_textarea"
             rows={15}
+            value={postContent}
             placeholder="Post Body"
+            onChange={(e) => setPostContent(e.target.value)}
           />
           <div className="mypostsp_button_container">
             <Button
               variant="contained"
+              onClick={handlePublishPost}
               color="default"
               endIcon={<CloudUpload />}>
               Publish
@@ -154,8 +178,8 @@ function MyPostsP() {
           My Posts
         </Typography>
         <Grid container spacing={3}>
-          {posts.map((item, index) => (
-            <PostCardC key={index} post={item} />
+          {myPostsList.map((myPost) => (
+            <PostCardC key={myPost._id} post={myPost} />
           ))}
         </Grid>
       </Container>

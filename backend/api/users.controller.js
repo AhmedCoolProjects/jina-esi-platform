@@ -2,24 +2,16 @@ import UsersDAO from "../dao/usersDAO.js";
 
 export default class UsersCtrl {
   static async apiGetAllUsers(req, res, next) {
-    const usersPerPage = req.query.usersPerPage
-      ? parseInt(req.query.usersPerPage, 10)
-      : 20;
-    const page = req.query.page ? parseInt(req.query.page, 10) : 0;
     let filters = {};
-    if (req.query.name) {
-      filters.name = req.query.name;
+    if (req.query.email) {
+      filters.email = req.query.email;
     }
     const { usersList, totalNbrUsers } = await UsersDAO.getAllUsers({
       filters,
-      page,
-      usersPerPage,
     });
     let response = {
       usersList: usersList,
-      page: page,
       filters: filters,
-      usersPerPage: usersPerPage,
       totalNbrUsers: totalNbrUsers,
     };
     res.json(response);

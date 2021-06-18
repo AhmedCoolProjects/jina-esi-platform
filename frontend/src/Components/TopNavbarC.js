@@ -45,22 +45,14 @@ const menuContents = [
   },
 ];
 const sections = [
-  { title: "UNIMARC", url: "/module" },
-  { title: "SGBD: SQL", url: "/module" },
-  { title: "Micro-économie", url: "/module" },
-  { title: "Comptabilité générale", url: "/module" },
-  { title: "TEC 2", url: "/module" },
-  { title: "Réseaux informatiques", url: "/module" },
-  { title: "Analyse documentaire", url: "/module" },
-  { title: "Management", url: "/module" },
-  { title: "UNIMARC", url: "/module" },
-  { title: "SGBD: SQL", url: "/module" },
-  { title: "Micro-économie", url: "/module" },
-  { title: "Comptabilité générale", url: "/module" },
-  { title: "TEC 2", url: "/module" },
-  { title: "Réseaux informatiques", url: "/module" },
-  { title: "Analyse documentaire", url: "/module" },
-  { title: "Management", url: "/module" },
+  { title: "UNIMARC" },
+  { title: "SGBD: SQL" },
+  { title: "Micro-économie" },
+  { title: "Comptabilité générale" },
+  { title: "TEC 2" },
+  { title: "Réseaux informatiques" },
+  { title: "Analyse documentaire" },
+  { title: "Management" }
 ];
 export default function TopNavbarC() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -145,7 +137,7 @@ export default function TopNavbarC() {
             style={{ color: "inherit", textDecoration: "none" }}
             key={index}
             className="toolbar_link"
-            to={section.url}>
+            to={`/module/${section.title}`}>
             {section.title}
           </Link>
         ))}

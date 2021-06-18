@@ -13,15 +13,11 @@ export default class UsersDAO {
       console.error(`Unable to establish collection handles in usersDAO: ${e}`);
     }
   }
-  static async getAllUsers({
-    filters = null,
-    page = 0,
-    usersPerPage = 20,
-  } = {}) {
+  static async getAllUsers({ filters = null } = {}) {
     let query;
     if (filters) {
-      if ("name" in filters) {
-        query = { $text: { $search: filters["first_name"] } };
+      if ("email" in filters) {
+        query = { email: { $eq: filters["email"] } };
       }
     }
     let cursor;
@@ -31,9 +27,8 @@ export default class UsersDAO {
       console.error(`Unable to find query for the cursor in usersDao ${e}`);
       return { usersList: [], totalNbrUsers: 0 };
     }
-    const displayCursor = cursor.limit(usersPerPage).skip(usersPerPage * page);
     try {
-      const usersList = await displayCursor.toArray();
+      const usersList = await cursor.toArray();
       const totalNbrUsers = await users.countDocuments(query);
       return { usersList, totalNbrUsers };
     } catch (e) {

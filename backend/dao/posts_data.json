@@ -1,0 +1,34 @@
+[
+  {
+    "writer_email": "ahmed.bargady@esi.ac.ma",
+    "title": "My First Post Title",
+    "content": "My First Post Content",
+    "date": "date",
+    "module_name": "SGBD",
+    "image": "image"
+  },
+  {
+    "writer_email": "ahmed.bargady@esi.ac.ma",
+    "title": "My Second Post Title",
+    "content": "My Second Post Content",
+    "date": "date",
+    "module_name": "SGBD",
+    "image": "image"
+  },
+  {
+    "writer_email": "bargady@esi.ac.ma",
+    "title": "My First Post Title",
+    "content": "My First Post Content",
+    "date": "date",
+    "module_name": "SGBD",
+    "image": "image"
+  },
+  {
+    "writer_email": "ahmed@esi.ac.ma",
+    "title": "My First Post Title",
+    "content": "My First Post Content",
+    "date": "date",
+    "module_name": "SGBD",
+    "image": "image"
+  }
+]

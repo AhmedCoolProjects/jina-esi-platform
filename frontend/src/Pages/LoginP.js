@@ -23,8 +23,7 @@ function LoginP() {
   const [openResetDialog, setOpenResetDialog] = useState(false);
   const [openTooManyRequests, setOpenTooManyRequests] = useState(false);
   const [openUNFDialog, setOpenUNFDialog] = useState(false);
-  const handleLoginFct = (e) => {
-    e.preventDefault();
+  const handleLoginFct = () => {
     firebaseAuth
       .signInWithEmailAndPassword(userEmail, userPassword)
       .then((user) => {
@@ -44,13 +43,28 @@ function LoginP() {
         }
       });
   };
-
+  // const addAllToFirebase = () => {
+  //   for (var i = 0; i < mydata.length; i++) {
+  //     var email = mydata[i].Email;
+  //     firebaseAuth
+  //       .createUserWithEmailAndPassword(email, "pass100")
+  //       .then((userCredential) => {
+  //         const user = userCredential.user;
+  //         console.log(user.email, i);
+  //       })
+  //       .catch((error) => {
+  //         const errorCode = error.code;
+  //         const errorMessage = error.message;
+  //       });
+  //   }
+  // };
   return (
     <Container className="loginp_container" maxWidth="lg">
       <div className="loginp_header">
         <img src="" alt="logo_esi" />
         <Typography variant="h3">Login Page</Typography>
       </div>
+
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12} md={6}>
           <img

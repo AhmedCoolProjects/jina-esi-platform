@@ -49,15 +49,21 @@ export default class PostsDAO {
   static async getAllPosts({ filters = null } = {}) {
     let query;
     if (filters) {
-      if ("title" in filters) {
+      if ("writer_email" in filters) {
+        query = { writer_email: { $eq: filters["writer_email"] } };
+      } else if ("module_name" in filters) {
+        query = { module_name: { $eq: filters["module_name"] } };
+      } else if ("title" in filters) {
         query = { $text: { $search: filters["title"] } };
       } else if ("content" in filters) {
         query = { $text: { $search: filters["content"] } };
+      } else if ("_id" in filters) {
+        query = { _id: { $eq: ObjectId(filters["_id"]) } };
       }
     }
     let cursor;
     try {
-      cursor = await posts.find(query);
+      cursor = await posts.find(query).sort({ date: -1 });
     } catch (e) {
       console.error(`Unable to find query for the cursor in postsDao ${e}`);
       return { postsList: [], totalNbrPosts: 0 };
@@ -83,7 +89,7 @@ export default class PostsDAO {
         },
       ];
       const getting_post = await posts.aggregate(pipeline).next();
-      return getting_post.comments;
+      return getting_post.comments?.reverse();
     } catch (e) {
       console.error(`Something went wrong in getting all comments : ${e}`);
       throw e;

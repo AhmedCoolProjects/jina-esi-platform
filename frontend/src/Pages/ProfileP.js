@@ -43,7 +43,7 @@ function ProfileP() {
                   position: "relative",
                 }}
                 elevation={4}>
-                <ProfileAvatarC user_image="https://www.gettyimages.fr/gi-resources/images/500px/983794168.jpg" />
+                <ProfileAvatarC user_image={user.image} />
                 <table style={{ width: "100%", marginTop: 24, padding: 12 }}>
                   <tr>
                     <td>
@@ -51,7 +51,7 @@ function ProfileP() {
                     </td>
                     <td>
                       <Typography variant="h5" color="textSecondary">
-                        Ahmed
+                        {user.first_name}
                       </Typography>
                     </td>
                   </tr>
@@ -64,7 +64,7 @@ function ProfileP() {
                     </td>
                     <td>
                       <Typography variant="h5" color="textSecondary">
-                        Bargady
+                        {user.last_name}
                       </Typography>
                     </td>
                   </tr>
