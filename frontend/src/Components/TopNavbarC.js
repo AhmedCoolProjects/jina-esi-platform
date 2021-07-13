@@ -1,10 +1,9 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import {
   Button,
   IconButton,
-  Link as MLink,
   Typography,
   Toolbar,
   Menu,
@@ -21,6 +20,7 @@ import {
 } from "@material-ui/icons";
 import "../styles/topnavbarc.css";
 import firebaseAuth from "../firebase/firebase";
+import JinaEPDataService from "../Axios/jinaesiplatform";
 
 const menuContents = [
   {
@@ -44,18 +44,10 @@ const menuContents = [
     icon: <ChatBubbleOutlineOutlined fontSize="small" />,
   },
 ];
-const sections = [
-  { title: "UNIMARC" },
-  { title: "SGBD: SQL" },
-  { title: "Micro-économie" },
-  { title: "Comptabilité générale" },
-  { title: "TEC 2" },
-  { title: "Réseaux informatiques" },
-  { title: "Analyse documentaire" },
-  { title: "Management" }
-];
+
 export default function TopNavbarC() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  const [sections, setSections] = useState([]);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const handleLogoutFct = () => {
     handleMobileMenuClose();
@@ -67,6 +59,7 @@ export default function TopNavbarC() {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
   const renderMobileMenu = (
     <Menu
       id="fade-menu"
@@ -94,6 +87,14 @@ export default function TopNavbarC() {
       </MenuItem>
     </Menu>
   );
+  useEffect(() => {
+    async function getAllModules() {
+      await JinaEPDataService.getAllModules().then((res) => {
+        setSections(res.data);
+      });
+    }
+    getAllModules();
+  }, []);
   return (
     <Fragment>
       <Toolbar className="first_toolbar_disktop">
@@ -121,26 +122,38 @@ export default function TopNavbarC() {
         <Typography
           variant="h5"
           color="inherit"
-          align="left"
+          align="center"
           style={{
             flex: 1,
           }}>
-          Jina ESI Platform
+          <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
+            Jina ESI Platform
+          </Link>
         </Typography>
-        <IconButton>
+        <IconButton
+          aria-controls="fade-menu"
+          aria-haspopup="true"
+          onClick={handleMobileMenuOpen}>
           <AccountCircleIcon />
         </IconButton>
       </Toolbar>
       <Toolbar component="nav" variant="dense" className="second_toolbar">
-        {sections.map((section, index) => (
-          <Link
-            style={{ color: "inherit", textDecoration: "none" }}
-            key={index}
-            className="toolbar_link"
-            to={`/module/${section.title}`}>
-            {section.title}
-          </Link>
-        ))}
+        {sections &&
+          sections.map((section) => (
+            <Link
+              style={{ color: "inherit", textDecoration: "none" }}
+              key={section._id}
+              className="toolbar_link"
+              to={{
+                pathname: `/module/${section._id}`,
+                moduleData: {
+                  module_name: section.name,
+                  profId: section.profId,
+                },
+              }}>
+              {section.name}
+            </Link>
+          ))}
       </Toolbar>
     </Fragment>
   );

@@ -38,6 +38,7 @@ export default function RecentPostCardC({ post }) {
                   padding: 20,
                 }}
                 variant="subtitle1"
+                component="h3"
                 paragraph>
                 <p className="recent_post_card_c_content">{post.content}</p>
               </Typography>
@@ -45,7 +46,7 @@ export default function RecentPostCardC({ post }) {
                 style={{ textAlign: "right" }}
                 variant="subtitle1"
                 color="textSecondary">
-                {moment(post.date).fromNow()}
+                {moment(post.createdAt).fromNow()}
               </Typography>
             </div>
           </div>

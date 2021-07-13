@@ -10,7 +10,7 @@ import moment from "moment";
 function PostP() {
   const { _id } = useParams();
   const [isOpen, setIsOpen] = useState(false);
-  const [post, setPost] = useState([]);
+  const [post, setPost] = useState(null);
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -22,20 +22,18 @@ function PostP() {
     setIsOpen(open);
   };
   useEffect(() => {
-    retrievePost();
-  }, []);
-  useEffect(() => {
+    async function retrievePost() {
+      await JinaEPDataService.getPostById(_id)
+        .then((response) => {
+          setPost(response.data[0]);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
     retrievePost();
   }, [_id]);
-  const retrievePost = () => {
-    JinaEPDataService.getPostById(_id)
-      .then((response) => {
-        setPost(response.data.postsList[0]);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+
   return (
     <div>
       <Container maxWidth="lg">
@@ -58,31 +56,31 @@ function PostP() {
         </Fab>
         <Container maxWidth="md">
           <Typography variant="h6" gutterBottom>
-            {post.title}
+            {post?.title}
           </Typography>
           <Divider />
           <Typography
             style={{ textAlign: "right" }}
             variant="subtitle1"
             color="textSecondary">
-            By: {post.writer_email}
+            By: {post?.writer_email}
           </Typography>
           <img
-            src={post.image}
-            alt={post.title}
+            src={post?.image}
+            alt={post?.title}
             style={{
               width: "100%",
               objectFit: "contain",
             }}
           />
           <Typography style={{ marginTop: 12 }} variant="h5" gutterBottom>
-            {post.content}
+            {post?.content}
           </Typography>
           <Typography
             style={{ textAlign: "right" }}
             variant="subtitle1"
             color="textSecondary">
-            {moment(post.date).fromNow()}
+            {moment(post?.createdAt).fromNow()}
           </Typography>
         </Container>
       </Container>

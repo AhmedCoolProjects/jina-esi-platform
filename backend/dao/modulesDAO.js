@@ -38,7 +38,7 @@ export default class ModulesDAO {
       return { error: e };
     }
   }
-  static async addMessageToChatRoom(module_id, message, date, sender_email) {
+  static async addMessageToChatRoom(module_name, message, date, sender_email) {
     try {
       const chatRoomArr = {
         _id: ObjectId(),
@@ -47,7 +47,7 @@ export default class ModulesDAO {
         sender_email: sender_email,
       };
       return await modules.updateOne(
-        { _id: ObjectId(module_id) },
+        { name: module_name },
         { $push: { chat_room: chatRoomArr } }
       );
     } catch (e) {
@@ -55,17 +55,23 @@ export default class ModulesDAO {
       return { error: e };
     }
   }
-  static async getAllModules() {
+  static async getAllModules({ filters = null } = {}) {
+    let query;
+    if (filters) {
+      if ("module_name" in filters) {
+        query = { name: { $eq: filters["module_name"] } };
+      }
+    }
     let cursor;
     try {
-      cursor = await modules.find({});
+      cursor = await modules.find(query);
     } catch (e) {
       console.error(`Unable to find all for the cursor in modulesDao ${e}`);
       return { modulesList: [], totalNbrModules: 0 };
     }
     try {
       const modulesList = await cursor.toArray();
-      const totalNbrModules = await modules.countDocuments();
+      const totalNbrModules = await modules.countDocuments(query);
       return { modulesList, totalNbrModules };
     } catch (e) {
       console.error(
@@ -74,17 +80,17 @@ export default class ModulesDAO {
       return { modulesList: [], totalNbrModules: 0 };
     }
   }
-  static async getAllChatRoom(module_id) {
+  static async getAllChatRoom(module_name) {
     try {
       const pipeline = [
         {
           $match: {
-            _id: new ObjectId(module_id),
+            name: module_name,
           },
         },
       ];
       const getting_chat_room = await modules.aggregate(pipeline).next();
-      return getting_chat_room.chat_room;
+      return getting_chat_room.chat_room?.reverse();
     } catch (e) {
       console.error(`Something went wrong in getting all chatRooms : ${e}`);
       throw e;

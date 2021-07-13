@@ -9,9 +9,8 @@ export default function RecentPostsC({ posts }) {
         Recent Posts
       </Typography>
       <Divider />
-      {posts.map((post) => (
-        <RecentPostCardC post={post} key={post._id} />
-      ))}
+      {posts &&
+        posts.map((post) => <RecentPostCardC post={post} key={post._id} />)}
     </Grid>
   );
 }

@@ -1,29 +1,60 @@
 import http from "./http-common";
 
 class JinaEPDataService {
-  getPostByEmail(writer_email) {
-    return http.get(`/post?writer_email=${writer_email}`);
+  // new
+  sendPost(data) {
+    return http.post("/posts", data);
   }
-  getAllPosts() {
-    return http.get(`/post`);
+  sendPMsg(data) {
+    return http.post(`/pmsgs`, data);
+  }
+  sendCRoomMsg(data) {
+    return http.post(`/crooms`, data);
+  }
+  addCommentToPost(data) {
+    return http.post(`/comments`, data);
+  }
+  countUserPosts(user_email) {
+    return http.get(`/posts/countbyemail/${user_email}`);
+  }
+  getPostByEmail(writer_email) {
+    return http.get(`/posts/bywriter/${writer_email}`);
   }
   getPostById(_id) {
-    return http.get(`/post?_id=${_id}`);
+    return http.get(`/posts/byid/${_id}`);
   }
-  getAllModulePosts(module_name) {
-    return http.get(`/post?module_name=${module_name}`);
+  getPostComments(post_id) {
+    return http.get(`/comments/post/${post_id}`);
   }
-  addPost(data) {
-    return http.post("/post", data);
+  getAllContacts() {
+    return http.get(`/users`);
   }
-  getAllComments(post_id) {
-    return http.get(`/comment?post_id=${post_id}`);
+  getConversation(participants) {
+    return http.get(`/convs/${participants}`);
   }
-  addComment(data) {
-    return http.post(`/comment`, data);
+  getMessagesOfConv(convId) {
+    return http.get(`/pmsgs/conv/${convId}`);
   }
-  getAllUsers(email) {
-    return http.get(`/user?email=${email}`);
+  getLastPosts() {
+    return http.get(`/posts/last`);
+  }
+  getModulePosts(module_id) {
+    return http.get(`/posts/bymodule/${module_id}`);
+  }
+  getModuleProf(prof_id) {
+    return http.get(`/profs/byid/${prof_id}`);
+  }
+  getCRoomMsgs(module_id) {
+    return http.get(`/crooms/bymodule/${module_id}`);
+  }
+  getUserByEmail(user_email) {
+    return http.get(`/users/byemail/${user_email}`);
+  }
+  getAllModules() {
+    return http.get(`/modules/all`);
+  }
+  getCoursesByModule(moduleId) {
+    return http.get(`/courses/bymodule/${moduleId}`);
   }
 }
 export default new JinaEPDataService();

@@ -8,59 +8,61 @@ import {
   InputAdornment,
 } from "@material-ui/core";
 import { Telegram } from "@material-ui/icons";
-import "../styles/postcommentdrawerc.css";
+import "../styles/modulechatroomc.css";
 import JinaEPDataService from "../Axios/jinaesiplatform";
 import PostCommentC from "./PostCommentC";
 import { useSelector } from "react-redux";
 import { selectUser } from "../Redux/User";
 import nopostcomment from "../assets/nopostcomment.svg";
 
-export default function PostCommentDrawerC({ isOpen, toggleDrawer, post_id }) {
+export default function ModuleChatRoomC({ isOpen, toggleDrawer, module_id }) {
   const user = useSelector(selectUser);
-  const [postComments, setPostComments] = useState([]);
-  const [commentContent, setCommentContent] = useState("");
-  // get post comments
-
-  async function retrievePostComments() {
-    await JinaEPDataService.getPostComments(post_id)
+  const [roomMessages, setRoomMessages] = useState([]);
+  const [messageContent, setMessageContent] = useState("");
+  // get msgs of the room chats of the module
+  async function retrieveRoomMessages() {
+    await JinaEPDataService.getCRoomMsgs(module_id)
       .then((response) => {
-        setPostComments(response.data);
+        setRoomMessages(response.data);
       })
       .catch((e) => {
         console.log(e);
       });
   }
-  retrievePostComments();
-  // add comment to post
-  const handleSendComment = async () => {
+  retrieveRoomMessages();
+  // send message in the room chat of the module
+  const handleSendRoomMessage = async (e) => {
+    e.preventDefault();
     var data = {
-      postId: post_id,
-      message: commentContent,
+      moduleId: module_id,
+      message: messageContent,
       sender_email: user.email,
     };
-    await JinaEPDataService.addCommentToPost(data)
-      .then((ress) => {
-        setCommentContent("");
-        retrievePostComments();
+    await JinaEPDataService.sendCRoomMsg(data)
+      .then((response) => {
+        setMessageContent("");
+        setRoomMessages([...roomMessages, response.data]);
       })
       .catch((e) => console.log(e));
   };
   const keyDownToSend = (e) => {
     if (e.key === "Enter") {
-      handleSendComment(e);
+      handleSendRoomMessage(e);
+      // retrieveRoomMessages();
     }
   };
+
   return (
     <div>
       <Fragment>
         <Drawer anchor="right" open={isOpen} onClose={toggleDrawer(false)}>
-          <div className="postcommentdrawerc_list_root">
+          <div className="modulechatroomc_list_root">
             <Typography variant="h6" gutterBottom>
-              {`${postComments.length} Comments`}
+              {`${roomMessages.length} Messages`}
             </Typography>
             <Divider />
-            <div className="postcommentdrawerc_list_comments">
-              {postComments.length === 0 ? (
+            <div className="modulechatroomc_list_comments">
+              {roomMessages.length === 0 ? (
                 <div
                   style={{
                     width: "100%",
@@ -80,11 +82,12 @@ export default function PostCommentDrawerC({ isOpen, toggleDrawer, post_id }) {
                   />
                 </div>
               ) : (
-                postComments.map((comment) => (
+                roomMessages &&
+                roomMessages.map((message) => (
                   <PostCommentC
-                    key={comment._id}
+                    key={message._id}
                     user_email={user.email}
-                    comment={comment}
+                    comment={message}
                   />
                 ))
               )}
@@ -94,13 +97,13 @@ export default function PostCommentDrawerC({ isOpen, toggleDrawer, post_id }) {
                 marginTop: 16,
                 width: "100%",
               }}
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-              placeholder="Add Comment.."
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+              placeholder="Type message.."
               onKeyDown={keyDownToSend}
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton onClick={handleSendComment}>
+                  <IconButton onClick={handleSendRoomMessage}>
                     <Telegram />
                   </IconButton>
                 </InputAdornment>

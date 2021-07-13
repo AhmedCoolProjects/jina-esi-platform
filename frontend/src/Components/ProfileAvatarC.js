@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import { Avatar, Badge, IconButton } from "@material-ui/core";
 import { AddAPhotoOutlined } from "@material-ui/icons";
 import { storage } from "../firebase/firebase";
@@ -8,7 +8,6 @@ import { login, selectUser } from "../Redux/User";
 export default function ProfileAvatarC() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
-  const [progress, setProgress] = useState(null);
   const hiddenFileInput = useRef(null);
 
   const handleChangeUserImage = (e) => {
@@ -27,10 +26,10 @@ export default function ProfileAvatarC() {
       "state_changed",
       (snapshot) => {
         // progress logic
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(progress);
+        // const progress = Math.round(
+        //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        // );
+        // setProgress(progress);
       },
       (err) => {
         console.log(err);

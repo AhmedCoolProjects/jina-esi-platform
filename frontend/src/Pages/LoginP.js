@@ -15,6 +15,7 @@ import {
   ResetPasswordDialog,
 } from "../Components/LoginDialogsC";
 import team_solid from "../assets/team_solid.svg";
+import esi_logo from "../assets/esi_logo.jpg";
 
 function LoginP() {
   const [userEmail, setUserEmail] = useState("");
@@ -61,7 +62,14 @@ function LoginP() {
   return (
     <Container className="loginp_container" maxWidth="lg">
       <div className="loginp_header">
-        <img src="" alt="logo_esi" />
+        <img
+          src={esi_logo}
+          alt="esi_logo"
+          style={{
+            height: "100%",
+            objectFit: "contain",
+          }}
+        />
         <Typography variant="h3">Login Page</Typography>
       </div>
 

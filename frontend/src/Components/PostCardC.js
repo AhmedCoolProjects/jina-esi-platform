@@ -40,7 +40,7 @@ function PostCardC({ post }) {
                 style={{ textAlign: "right" }}
                 variant="subtitle1"
                 color="textSecondary">
-                {moment(post.date).fromNow()}
+                {moment(post.createdAt).fromNow()}
               </Typography>
             </div>
           </div>

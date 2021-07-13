@@ -23,3 +23,5 @@
 /frontend/yarn-error.log*
 # backend
 /backend/node_modules
+/server
+server

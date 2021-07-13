@@ -13,6 +13,7 @@
   flex-direction: column;
   padding: 12px;
   overflow-y: auto;
+  position: relative;
 }
 .pchatp_header {
   width: 100%;
@@ -45,12 +46,12 @@
   margin-left: 25% !important;
   margin: 4px 0;
   width: 75%;
-  border-radius: 16px 0px 16px 16px;
+  border-radius: 16px 0px 16px 16px !important;
   padding: 8px;
 }
 .pchatp_reciever_paper {
   margin-right: 25% !important;
-  border-radius: 0px 16px 16px 16px;
+  border-radius: 0px 16px 16px 16px !important;
   margin: 4px 0;
   width: 75%;
   padding: 8px;

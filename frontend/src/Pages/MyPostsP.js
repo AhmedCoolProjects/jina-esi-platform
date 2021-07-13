@@ -30,85 +30,99 @@ const MenuProps = {
     },
   },
 };
-const modules_names = [
-  { title: "UNIMARC" },
-  { title: "SGBD: SQL" },
-  { title: "Micro-économie" },
-  { title: "Comptabilité générale" },
-  { title: "TEC 2" },
-  { title: "Réseaux informatiques" },
-  { title: "Analyse documentaire" },
-  { title: "Management" },
-];
+
 function MyPostsP() {
   const user = useSelector(selectUser);
-  const [postModule, setPostModule] = useState("");
+  const [postModuleId, setPostModuleId] = useState("");
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
   const [myPostsList, setMyPostsList] = useState([]);
-  const [progress, setProgress] = useState("");
+  const [sections, setSections] = useState([]);
+  // const [progress, setProgress] = useState("");
   const [postImage, setPostImage] = useState(null);
+  // send post
   const handlePublishPost = () => {
-    const postImageName = `${Date.now()}-${postImage.name}`;
-    const uploadTask = storage
-      .ref(`posts-images/${postImageName}`)
-      .put(postImage);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        // progress logic
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(progress);
-      },
-      (err) => {
-        console.log(err);
-      },
-      () => {
-        storage
-          .ref("posts-images")
-          .child(`${postImageName}`)
-          .getDownloadURL()
-          .then((url) => {
-            var data = {
-              writer_email: user.email,
-              title: postTitle,
-              content: postContent,
-              date: Date.now(),
-              module_name: postModule,
-              image: url,
-            };
-            JinaEPDataService.addPost(data)
-              .then((response) => {
-                setPostContent("");
-                setPostTitle("");
-                setPostImage(null);
-                setPostModule("");
-                retrieveMyPosts();
-              })
-              .catch((e) => console.log(e));
-          });
+    if (postImage !== null) {
+      if (postContent !== "") {
+        if (postTitle !== "") {
+          if (postModuleId !== "") {
+            const postImageName = `${Date.now()}-${postImage.name}`;
+            const uploadTask = storage
+              .ref(`posts-images/${postImageName}`)
+              .put(postImage);
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                // progress logic
+                // const progress = Math.round(
+                //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                // );
+                // setProgress(progress);
+              },
+              (err) => {
+                console.log(err);
+              },
+              () => {
+                storage
+                  .ref("posts-images")
+                  .child(`${postImageName}`)
+                  .getDownloadURL()
+                  .then((url) => {
+                    var data = {
+                      writer_email: user.email,
+                      title: postTitle,
+                      content: postContent,
+                      moduleId: postModuleId,
+                      image: url,
+                    };
+                    JinaEPDataService.sendPost(data)
+                      .then((ress) => {
+                        setPostContent("");
+                        setPostTitle("");
+                        setPostImage(null);
+                        setPostModuleId("");
+                        retrieveMyPosts();
+                      })
+                      .catch((e) => console.log(e));
+                  });
+              }
+            );
+          } else {
+            alert("post modal name is required !");
+          }
+        } else {
+          alert("post title is required !");
+        }
+      } else {
+        alert("content is required !");
       }
-    );
+    } else {
+      alert("image fields is required !");
+    }
   };
   const setFilesFct = (files) => {
     setPostImage(files[0]);
   };
-
+  // get modules
   useEffect(() => {
-    retrieveMyPosts();
+    async function getAllModules() {
+      await JinaEPDataService.getAllModules().then((res) => {
+        setSections(res.data);
+      });
+    }
+    getAllModules();
   }, []);
-  const retrieveMyPosts = () => {
-    JinaEPDataService.getPostByEmail(user.email)
+  // get posts of the user
+  async function retrieveMyPosts() {
+    await JinaEPDataService.getPostByEmail(user.email)
       .then((response) => {
-        setMyPostsList(response.data.postsList);
+        setMyPostsList(response.data);
       })
       .catch((e) => {
         console.log(e);
       });
-  };
-
+  }
+  retrieveMyPosts();
   return (
     <Fragment>
       <Container max-width="lg">
@@ -138,15 +152,16 @@ function MyPostsP() {
               <Select
                 labelId="select-module"
                 id="demo-mutiple-name"
-                value={postModule}
-                onChange={(e) => setPostModule(e.target.value)}
+                value={postModuleId}
+                onChange={(e) => setPostModuleId(e.target.value)}
                 input={<Input />}
                 MenuProps={MenuProps}>
-                {modules_names.map((moduleName) => (
-                  <MenuItem key={moduleName.title} value={moduleName.title}>
-                    {moduleName.title}
-                  </MenuItem>
-                ))}
+                {sections &&
+                  sections.map((section) => (
+                    <MenuItem key={section._id} value={section._id}>
+                      {section.name}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </div>
@@ -164,6 +179,9 @@ function MyPostsP() {
               variant="contained"
               onClick={handlePublishPost}
               color="default"
+              disabled={
+                !postContent || !postTitle || !postImage || !postModuleId
+              }
               endIcon={<CloudUpload />}>
               Publish
             </Button>
@@ -175,12 +193,13 @@ function MyPostsP() {
           style={{ textAlign: "center", marginBottom: 24 }}
           variant="h4"
           color="textSecondary">
-          My Posts
+          {`My Posts (${myPostsList.length})`}
         </Typography>
         <Grid container spacing={3}>
-          {myPostsList.map((myPost) => (
-            <PostCardC key={myPost._id} post={myPost} />
-          ))}
+          {myPostsList &&
+            myPostsList.map((myPost) => (
+              <PostCardC key={myPost._id} post={myPost} />
+            ))}
         </Grid>
       </Container>
     </Fragment>

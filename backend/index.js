@@ -5,6 +5,7 @@ import UsersDAO from "./dao/usersDAO.js";
 import ProfsDAO from "./dao/usersDAO.js";
 import PostsDAO from "./dao/postsDAO.js";
 import ModulesDAO from "./dao/modulesDAO.js";
+import PChatDAO from "./dao/PChatDAO.js";
 
 dotenv.config();
 const MongoClient = mongodb.MongoClient;
@@ -25,6 +26,7 @@ MongoClient.connect(process.env.JINAESIPLATFORM_DB_URI, {
     await ProfsDAO.injectDB(client);
     await PostsDAO.injectDB(client);
     await ModulesDAO.injectDB(client);
+    await PChatDAO.injectDB(client);
     //   start the server
     app.listen(port, () => {
       console.log("listening on the port ");

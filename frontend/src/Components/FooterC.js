@@ -9,7 +9,7 @@ function Copyright() {
       <Link
         target="blank_"
         color="inherit"
-        href="https://www.linkedin.com/in/bargady-ahmed-082b30177">
+        href="https://ahmed-bargady-10.web.app">
         Jina Cool Projects
       </Link>{" "}
       {new Date().getFullYear()}
@@ -21,6 +21,7 @@ function Copyright() {
 const useStyles = makeStyles((theme) => ({
   footer: {
     padding: theme.spacing(6),
+    marginTop: 24,
     backgroundColor:
       theme.palette.type === "light"
         ? theme.palette.grey[200]
@@ -36,7 +37,7 @@ function FooterC() {
         variant="h6"
         align="center"
         gutterBottom>
-        Created By:
+        Created with ❤ By:
       </Typography>
       <Typography
         variant="subtitle1"

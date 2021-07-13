@@ -4,21 +4,22 @@ import {
   Grid,
   Paper,
   Typography,
-  Divider,
   Avatar,
   CardActionArea,
 } from "@material-ui/core";
 import { MeetingRoomOutlined } from "@material-ui/icons";
 import TopNavbarC from "../Components/TopNavbarC";
-import PostCommentDrawerC from "../Components/PostCommentDrawerC";
+import ModuleChatRoomC from "../Components/ModuleChatRoomC";
 import PostCardC from "../Components/PostCardC";
 import JinaEPDataService from "../Axios/jinaesiplatform";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 
 function ModuleP() {
   const [isOpen, setIsOpen] = useState(false);
-  const { module_name } = useParams();
+  const { module_id } = useParams();
+  const { moduleData } = useLocation();
   const [modulePostsList, setModulePostsList] = useState([]);
+  const [moduleProf, setModuleProf] = useState(null);
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -26,24 +27,35 @@ function ModuleP() {
     ) {
       return;
     }
-
     setIsOpen(open);
   };
+  // get prof,
   useEffect(() => {
-    retrieveModulePosts();
-  }, []);
+    async function retrieveModuleProf() {
+      await JinaEPDataService.getModuleProf(moduleData.profId)
+        .then((response) => {
+          setModuleProf(response.data[0]);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+    retrieveModuleProf();
+  }, [moduleData.profId]);
+  // get posts of the module
   useEffect(() => {
+    async function retrieveModulePosts() {
+      await JinaEPDataService.getModulePosts(module_id)
+        .then((response) => {
+          setModulePostsList(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
     retrieveModulePosts();
-  }, [module_name]);
-  const retrieveModulePosts = () => {
-    JinaEPDataService.getAllModulePosts(module_name)
-      .then((response) => {
-        setModulePostsList(response.data.postsList);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  }, [module_id]);
+
   return (
     <div>
       <Container maxWidth="lg">
@@ -53,7 +65,7 @@ function ModuleP() {
           style={{ textAlign: "center", marginBottom: 24 }}
           variant="h4"
           color="textSecondary">
-          {module_name}
+          {moduleData.module_name}
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12} md={5}>
@@ -83,7 +95,7 @@ function ModuleP() {
                   height: 200,
                 }}
                 alt="Prof Image"
-                src="https://www.gettyimages.fr/gi-resources/images/500px/983794168.jpg"
+                src={moduleProf && moduleProf.image}
               />
               <table style={{ width: "100%", marginTop: 24, padding: 12 }}>
                 <tr>
@@ -94,11 +106,11 @@ function ModuleP() {
                   </td>
                   <td>
                     <Typography variant="h5" color="textSecondary">
-                      Mr. Ahmed Bargady
+                      {moduleProf &&
+                        `Mr/s. ${moduleProf.first_name} ${moduleProf.last_name}`}
                     </Typography>
                   </td>
                 </tr>
-                <Divider style={{ marginBottom: 12 }} />
                 <tr>
                   <td>
                     <Typography style={{ marginRight: 8 }} variant="h6">
@@ -107,7 +119,7 @@ function ModuleP() {
                   </td>
                   <td>
                     <Typography variant="h5" color="textSecondary">
-                      ahmed.bargady@esi.ac.ma
+                      {moduleProf && moduleProf.email}
                     </Typography>
                   </td>
                 </tr>
@@ -115,28 +127,32 @@ function ModuleP() {
             </Paper>
           </Grid>
           <Grid item xs={12} sm={12} md={7}>
-            <Paper
-              style={{
-                padding: 0,
-                marginBottom: 8,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexDirection: "row",
-              }}
-              elevation={4}>
-              <CardActionArea
+            <Link
+              to={`/docs/${module_id}`}
+              style={{ color: "inherit", textDecoration: "none" }}>
+              <Paper
                 style={{
-                  padding: 12,
+                  padding: 0,
+                  marginBottom: 8,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
                   flexDirection: "row",
-                }}>
-                <Typography variant="h6">Courses:</Typography>
-                <Typography variant="h6">12 documents</Typography>
-              </CardActionArea>
-            </Paper>
+                }}
+                elevation={4}>
+                <CardActionArea
+                  style={{
+                    padding: 12,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexDirection: "row",
+                  }}>
+                  <Typography variant="h6">Courses:</Typography>
+                  <Typography variant="h6">12 documents</Typography>
+                </CardActionArea>
+              </Paper>
+            </Link>
             <Paper
               style={{
                 padding: 0,
@@ -211,15 +227,20 @@ function ModuleP() {
           style={{ textAlign: "center", marginBottom: 24 }}
           variant="h4"
           color="textSecondary">
-          Posts
+          {`Posts (${modulePostsList?.length})`}
         </Typography>
         <Grid container spacing={3}>
-          {modulePostsList.map((modulePost) => (
-            <PostCardC key={modulePost._id} post={modulePost} />
-          ))}
+          {modulePostsList &&
+            modulePostsList.map((modulePost) => (
+              <PostCardC key={modulePost._id} post={modulePost} />
+            ))}
         </Grid>
       </Container>
-      <PostCommentDrawerC isOpen={isOpen} toggleDrawer={toggleDrawer} />
+      <ModuleChatRoomC
+        isOpen={isOpen}
+        toggleDrawer={toggleDrawer}
+        module_id={module_id}
+      />
     </div>
   );
 }

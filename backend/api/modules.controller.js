@@ -2,7 +2,13 @@ import ModulesDAO from "../dao/modulesDAO.js";
 
 export default class ModulesCtrl {
   static async apiGetAllModules(req, res, next) {
-    const { modulesList, totalNbrModules } = await ModulesDAO.getAllModules();
+    let filters = {};
+    if (req.query.module_name) {
+      filters.module_name = req.query.module_name;
+    }
+    const { modulesList, totalNbrModules } = await ModulesDAO.getAllModules({
+      filters,
+    });
     let response = {
       modulesList: modulesList,
       totalNbrModules: totalNbrModules,
@@ -26,12 +32,12 @@ export default class ModulesCtrl {
   }
   static async apiAddMessageToChatRoom(req, res, next) {
     try {
-      const module_id = req.body.module_id;
+      const module_name = req.body.module_name;
       const sender_email = req.body.sender_email;
       const message = req.body.message;
       const date = req.body.date;
       const OperationResponse = await ModulesDAO.addMessageToChatRoom(
-        module_id,
+        module_name,
         message,
         date,
         sender_email
@@ -43,8 +49,8 @@ export default class ModulesCtrl {
   }
   static async apiGetAllChatRoom(req, res, next) {
     try {
-      const module_id = req.query.module_id;
-      const OperationResponse = await ModulesDAO.getAllChatRoom(module_id);
+      const module_name = req.query.module_name;
+      const OperationResponse = await ModulesDAO.getAllChatRoom(module_name);
       res.json(OperationResponse);
     } catch (e) {
       res.status(500).json({ error: e.message });

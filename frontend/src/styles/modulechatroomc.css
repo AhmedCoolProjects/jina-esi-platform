@@ -1,0 +1,41 @@
+.modulechatroomc_list_root {
+  width: 500px;
+  padding: 16px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.modulechatroomc_list_comments {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 8px;
+  padding: 12px;
+  flex: 1;
+  max-height: 470px;
+  border-radius: 8px;
+  border: 1px solid #d1d1d1da;
+  overflow-y: scroll;
+  width: 100%;
+}
+.modulechatroomc_list_comments::-webkit-scrollbar {
+  display: none;
+}
+.modulechatroomc_sender_paper {
+  margin-left: 25% !important;
+  margin: 4px 0;
+  width: 75%;
+  border-radius: 16px;
+  padding: 8px;
+}
+.modulechatroomc_reciever_paper {
+  margin-right: 25% !important;
+  border-radius: 16px;
+  margin: 4px 0;
+  width: 75%;
+  padding: 8px;
+}

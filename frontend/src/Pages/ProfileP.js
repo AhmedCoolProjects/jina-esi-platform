@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -13,12 +13,27 @@ import ProfileAvatarC from "../Components/ProfileAvatarC";
 import { useSelector } from "react-redux";
 import { selectUser } from "../Redux/User";
 import firebaseAuth from "../firebase/firebase";
+import JinaEPDataService from "../Axios/jinaesiplatform";
 
 function ProfileP() {
   const user = useSelector(selectUser);
+  const [postsNbr, setPostsNbr] = useState(0);
+
   const handleLogoutFct = () => {
     firebaseAuth.signOut();
   };
+  useEffect(() => {
+    async function getPostsNbr() {
+      await JinaEPDataService.countUserPosts(user.email)
+        .then((res) => {
+          setPostsNbr(res.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+    getPostsNbr();
+  }, [user.email]);
   return (
     <div>
       <Container maxWidth="lg">
@@ -96,7 +111,7 @@ function ProfileP() {
                 }}
                 elevation={4}>
                 <Typography variant="h6">My Posts:</Typography>
-                <Typography variant="h6">12 posts</Typography>
+                <Typography variant="h6">{`${postsNbr} Posts`}</Typography>
               </Paper>
               <Paper
                 style={{

@@ -16,19 +16,19 @@ const bigBgC = {
 };
 
 export default function DashboardP() {
-  const [recentPosts, setRecentPosts] = useState([]);
+  const [recentPosts, setRecentPosts] = useState(null);
   useEffect(() => {
+    const retrieveRecentPosts = () => {
+      JinaEPDataService.getLastPosts()
+        .then((res) => {
+          setRecentPosts(res.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    };
     retrieveRecentPosts();
   }, []);
-  const retrieveRecentPosts = () => {
-    JinaEPDataService.getAllPosts()
-      .then((res) => {
-        setRecentPosts(res.data.postsList.slice(0, 3));
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
 
   return (
     <Fragment>
