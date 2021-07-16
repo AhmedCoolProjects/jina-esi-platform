@@ -25,6 +25,7 @@ import { yellow } from "@material-ui/core/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout, selectUser } from "./Redux/User";
 import jinaesiplatform from "./Axios/jinaesiplatform";
+import CalcNotesP from "./Pages/CalcNotesP";
 
 function App() {
   const user = useSelector(selectUser);
@@ -94,6 +95,7 @@ function App() {
               <Switch>
                 <Route path="/" exact>
                   <LoginP />
+
                   <FooterC />
                 </Route>
                 <Redirect to="/" />
@@ -102,6 +104,10 @@ function App() {
               <Switch>
                 <Route path="/module/:module_id" exact>
                   <ModuleP />
+                  <FooterC />
+                </Route>
+                <Route path="/result_calc" exact>
+                  <CalcNotesP />
                   <FooterC />
                 </Route>
                 <Route path="/pchat" exact>

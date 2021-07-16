@@ -17,6 +17,7 @@ import {
   BookOutlined,
   ChatBubbleOutlineOutlined,
   ExitToAppOutlined,
+  Functions as FunctionsIcon,
 } from "@material-ui/icons";
 import "../styles/topnavbarc.css";
 import firebaseAuth from "../firebase/firebase";
@@ -42,6 +43,11 @@ const menuContents = [
     title: "Personal Chat",
     link: "/pchat",
     icon: <ChatBubbleOutlineOutlined fontSize="small" />,
+  },
+  {
+    title: "My Results",
+    link: "/result_calc",
+    icon: <FunctionsIcon fontSize="small" />,
   },
 ];
 

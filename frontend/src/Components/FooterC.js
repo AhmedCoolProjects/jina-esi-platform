@@ -6,10 +6,7 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link
-        target="blank_"
-        color="inherit"
-        href="https://ahmed-bargady-10.web.app">
+      <Link target="blank_" color="inherit" href="https://ahmedbargady.me">
         Jina Cool Projects
       </Link>{" "}
       {new Date().getFullYear()}
@@ -37,7 +34,7 @@ function FooterC() {
         variant="h6"
         align="center"
         gutterBottom>
-        Created with ❤ By:
+        Created with ❤️ By:
       </Typography>
       <Typography
         variant="subtitle1"
